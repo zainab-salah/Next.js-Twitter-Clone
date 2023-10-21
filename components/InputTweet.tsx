@@ -1,23 +1,13 @@
 "use client";
-import { PostgrestError } from "@supabase/supabase-js";
+// import { PostgrestError } from "@supabase/supabase-js";
 import React, { useRef } from "react";
 import { toast } from "sonner";
 
-type ComposeTweetFormProps = {
-  serverAction: any;
-};
-
-const ComposeTweetForm = ({ serverAction }: ComposeTweetFormProps) => {
+const ComposeTweetForm = () => {
   const resetRef = useRef<HTMLButtonElement>(null);
 
   const handleSubmitTweet = async (data: any) => {
     try {
-      const res = await serverAction(data);
-      if (res?.error) {
-        return toast.error(res.error.message);
-      }
-      toast.success("Tweet sent successfully!");
-      resetRef.current?.click();
     } catch (error) {
       console.log(error);
     }

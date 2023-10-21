@@ -8,8 +8,6 @@ import {
   BsThreeDots,
 } from "react-icons/bs";
 import { HiOutlineHashtag } from "react-icons/hi";
-import { HiEnvelope } from "react-icons/hi2";
-import { cookies, headers } from "next/headers";
 
 const NAVIGATION_ITEMS = [
   {
@@ -58,7 +56,7 @@ const LeftSidebar = () => {
             {item.title !== "Twitter" && <div>{item.title}</div>}
           </Link>
         ))}
-        <button className="rounded-full m-4 bg-primary p-2 text-2xl text-center hover:bg-opacity-70 transition duration-200">
+        <button className="rounded-full m-4  bg-twitterColor p-2 text-2xl text-center hover:bg-opacity-70 transition duration-200">
           Tweet
         </button>
       </div>
