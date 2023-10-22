@@ -1,10 +1,12 @@
 "use client";
-
 import { createContext, useContext, useEffect, useState } from "react";
-import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import {
+  SupabaseClient,
+  User,
+  createClientComponentClient,
+} from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 
-import type { SupabaseClient, User } from "@supabase/auth-helpers-nextjs";
 import type { Database } from "@/lib/database.types";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -22,7 +24,7 @@ export default function SupabaseProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [supabase] = useState(() => createBrowserSupabaseClient());
+  const supabase = createClientComponentClient<Database>();
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -52,6 +54,7 @@ export default function SupabaseProvider({
       subscription.unsubscribe();
     };
   }, [router, supabase]);
+  console.log(user);
 
   return (
     <Context.Provider value={{ supabase }}>
@@ -92,6 +95,7 @@ export default function SupabaseProvider({
                 if (signUpError) {
                   return toast.error(signUpError.message);
                 }
+
                 toast.success("magic link sent successfully");
                 setIsLoading(false);
               }}

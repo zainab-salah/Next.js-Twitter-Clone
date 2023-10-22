@@ -1,3 +1,5 @@
+import { Database } from "@/lib/database.types";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Link from "next/link";
 import { BiHomeCircle, BiUser } from "react-icons/bi";
 import {
@@ -40,7 +42,11 @@ const NAVIGATION_ITEMS = [
   },
 ];
 
-const LeftSidebar = () => {
+const LeftSidebar = async () => {
+  const supabase = createClientComponentClient<Database>();
+  const { data, error } = await supabase.auth.getUser();
+
+  console.log({ data, error });
   return (
     <section className="w-[20%] sticky top-0 xl:flex flex-col items-stretch h-screen hidden">
       <div className="flex flex-col items-stretch h-full space-y-4 mt-4">
@@ -64,10 +70,8 @@ const LeftSidebar = () => {
         <div className="flex items-center space-x-2">
           <div className="rounded-full bg-slate-400 w-10 h-10"></div>
           <div className="text-left text-sm">
-            <div className="font-semibold">
-              {/* {userData.user?.user_metadata.full_name} */}user name
-            </div>
-            <div className="">@user_name</div>
+            {/* <div className="font-semibold">{data?.user_metadata.full_name}</div> */}
+            <div className="">@user_name</div>z
           </div>
         </div>
         <div>
