@@ -1,102 +1,104 @@
 "use client";
-
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 import type { Database } from "@/lib/database.types";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Toaster, toast } from "sonner";
 
-export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [username, setUsername] = useState("");
-
+const SignUpPAge = () => {
   const supabase = createClientComponentClient<Database>();
 
-  const handleSignUp = async () => {
-    // await supabase.auth.signUp({
-    //   username,
-    //   password,
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [fullName, setFullName] = useState("");
 
-    //   options: {
-    //     emailRedirectTo: `${location.origin}/auth/callback`,
-    //   },
-    // });
+  const [isLoading, setIsLoading] = useState(false);
+  async function handleSignUp() {
+    setIsLoading(true);
+
     const { data, error } = await supabase
       .from("profiles")
       .select()
       .eq("username", username.trim());
 
     if (data && data?.length > 0) {
-      console.log(error);
+      return toast.error("username already exists, please use another");
+    } else if (error) {
+      return toast.error(error.message);
     }
 
-    const { data: signUpData, error: signUpError } =
-      await supabase.auth.signInWithOtp({
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp(
+      {
         email: email.trim(),
+        password: password,
         options: {
+          captchaToken: undefined,
           data: {
             username,
             full_name: fullName,
           },
         },
-      });
+      }
+    );
     console.log(signUpData);
     if (signUpError) {
-      console.log(signUpError);
+      return toast.error(signUpError.message);
     }
-  };
 
-  // const handleSignIn = async () => {
-  //   await supabase.auth.signInWithPassword({
-
-  //     email,
-  //     password,
-  //   });
-  //   router.refresh();
-  // };
-
-  // const handleSignOut = async () => {
-  //   await supabase.auth.signOut();
-  //   router.refresh();
-  // };
-
+    toast.success("magic link sent successfully");
+    setIsLoading(false);
+  }
   return (
-    <div className="flex flex-col gap-5 items-center justify-center bg-black">
-      <input
-        name="username"
-        onChange={(e) => setUsername(e.target.value)}
-        value={username}
-        type="text"
-        placeholder="User Name"
+    <div className="m-auto">
+      <Toaster />
+
+      <h3 className="text-lg my-1">Please sign in to continue</h3>
+      <form
         className="text-black"
-      />{" "}
-      <input
-        type="text"
-        placeholder="your name"
-        value={fullName}
-        onChange={(e) => setFullName(e.target.value)}
-        className="text-black"
-      />
-      <input
-        name="email"
-        onChange={(e) => setEmail(e.target.value)}
-        value={email}
-        placeholder="Email"
-        className="text-black"
-      />
-      <input
-        type="password"
-        name="password"
-        onChange={(e) => setPassword(e.target.value)}
-        value={password}
-        placeholder="Password"
-        className="text-black"
-      />
-      <button onClick={handleSignUp}>Sign up</button>
-      {/* <button onClick={handleSignIn}>Sign in</button> */}
-      {/* <button onClick={handleSignOut}>Sign out</button> */}
+        onSubmit={async (e) => {
+          e.preventDefault();
+          handleSignUp();
+        }}
+      >
+        <Input
+          type="email"
+          placeholder="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <Input
+          type="password"
+          placeholder="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <Input
+          type="text"
+          placeholder="username"
+          min={3}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="my-2"
+        />
+        <Input
+          type="text"
+          placeholder="your name"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          className="my-2"
+        />
+        <p className="text-sm text-gray-900 my-2">
+          you will receive a login magic link!
+        </p>
+        <div className="flex w-full justify-end">
+          <Button disabled={isLoading}>Sign Up</Button>
+        </div>
+      </form>
     </div>
   );
-}
+};
+
+export default SignUpPAge;

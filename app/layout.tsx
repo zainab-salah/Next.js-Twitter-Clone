@@ -16,7 +16,7 @@ export default function RootLayout({
             <SupabaseProvider>
               <LeftSidebar />
               {children}
-              <RightSection />
+              {/* <RightSection /> */}
             </SupabaseProvider>
           </div>
         </div>

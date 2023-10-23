@@ -1,6 +1,4 @@
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import ComposeTweetForm from "../InputTweet";
-import { Database } from "@/lib/database.types";
 
 const MainComponent = async () => {
   return (
