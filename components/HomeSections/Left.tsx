@@ -19,8 +19,8 @@ const LeftSidebar = () => {
 
   // const { data: userData, error: userError } = await supabase.auth.getUser();
   // console.log(userData);
-
   const { user } = useSupabase();
+  console.log(user);
   // console.log(user);
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -92,3 +92,54 @@ const NAVIGATION_ITEMS = [
     icon: BiUser,
   },
 ];
+
+import { useQuery } from "react-query";
+
+function UserProfile() {
+  const userEmail = "kainykawai@gmail.com"; // Get the user's email from your user object
+  const googleApiKey = "YOUR_GOOGLE_API_KEY"; // Replace with your Google API key
+  const googleAccessToken = "YOUR_GOOGLE_ACCESS_TOKEN"; // Obtain this from Supabase
+
+  const {
+    data: profileImage,
+    isLoading,
+    isError,
+  } = useQuery<string>("googleProfileImage", () =>
+    fetchGoogleProfileImage(userEmail, googleApiKey, googleAccessToken)
+  );
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error fetching the profile image</div>;
+  }
+
+  return (
+    <div>
+      <img src={profileImage} alt="Google Profile" />
+    </div>
+  );
+}
+
+import axios from "axios";
+
+const fetchGoogleProfileImage = async (
+  email: string,
+  apiKey: string,
+  googleAccessToken: string
+) => {
+  const response = await axios.get(
+    `https://people.googleapis.com/v1/people/me?personFields=photos&key=${apiKey}`,
+    {
+      headers: {
+        Authorization: `Bearer ${googleAccessToken}`, // You'll need to obtain the access token from Supabase
+      },
+      params: {
+        "requestMask.includeField": "person.photos",
+      },
+    }
+  );
+  return response.data.photos[0].url;
+};
