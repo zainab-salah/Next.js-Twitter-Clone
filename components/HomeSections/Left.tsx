@@ -97,7 +97,7 @@ import { useQuery } from "react-query";
 
 function UserProfile() {
   const userEmail = "kainykawai@gmail.com"; // Get the user's email from your user object
-  const googleApiKey = "YOUR_GOOGLE_API_KEY"; // Replace with your Google API key
+  const googleApiKey = process.env.GOOGLE_CLIENT_ID; // Replace with your Google API key
   const googleAccessToken = "YOUR_GOOGLE_ACCESS_TOKEN"; // Obtain this from Supabase
 
   const {
@@ -116,11 +116,7 @@ function UserProfile() {
     return <div>Error fetching the profile image</div>;
   }
 
-  return (
-    <div>
-      <img src={profileImage} alt="Google Profile" />
-    </div>
-  );
+  return <div>{/* <img src={profileImage} alt="Google Profile" /> */}</div>;
 }
 
 import axios from "axios";
